@@ -1,0 +1,138 @@
+.comment-item {
+  border-bottom: 1px solid #ccc;
+  padding: 8px 0;
+  margin-bottom: 8px;
+}
+
+.comment-meta {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.comment-date {
+  margin-left: 10px;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.comment-content {
+  margin: 5px 0 0;
+  font-size: 1rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/********************************************************
+  ADD NEW COMMENT FORM (Minimalist, Modern)
+********************************************************/
+#addCommentContainer {
+  margin-top: 10px;
+}
+
+.Permission-Denied:hover{
+  cursor:not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+#commentsList{
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+#addCommentContainer h4 {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* The form itself */
+#commentForm {
+  display: flex;
+  flex-direction: column; /* Stack textarea and button vertically */
+  gap: 10px; /* Spacing between textarea and button */
+  max-width: 600px; /* Limit width for readability */
+}
+
+/* The textarea for writing a comment */
+#commentContent {
+  resize: vertical; /* Allow vertical resizing only */
+  padding: 10px;
+  font-size: 1rem;
+  line-height: 1.4;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Roboto", sans-serif;
+  transition: border-color 0.2s ease;
+}
+
+#commentContent:focus {
+  outline: none;
+  border-color: #888; /* Slightly darker border on focus */
+}
+
+/* The submit button */
+#commentSubmit {
+  align-self: flex-start; /* Button stays left-aligned (or change to flex-end) */
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(90deg, #6200ea, #bb86fc);; /* Dark gray or your brand color */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#commentSubmit:hover {
+  background-color: #555; /* Slightly lighter on hover */
+}
+
+.reactions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-flow: row wrap;
+  width: 100%;
+}
+
+.like-div,
+.dislike-div {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-flow: row wrap;
+}
+
+.selected > .btn,
+.selected > .count {
+  color: #6200ea;
+}
+
+.like-div {
+  margin-right: 1rem;
+}
+
+.like-div,
+.dislike-div {
+  border: none;
+  cursor: default;
+  color: #847392;
+}
+
+.btn {
+  border: none;
+  background-color: transparent;
+  color: #847392;
+  margin-right: 0.3rem;
+}
+
+.reactions .active {
+  cursor: pointer;
+}
+
+.reactions .active:not(.selected) > .btn:hover {
+  cursor: pointer;
+  color: blueviolet;
+}

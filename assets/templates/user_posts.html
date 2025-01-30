@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+    <title>Posts</title>
+  </head>
+
+  <body>
+    <nav>
+      <a href="/" alt="home" id="logo">01 Forum</a>
+      {{if .}}
+      <div class="links">
+        <a href="/logout" alt="logout" id="logout-btn"
+          ><button class="nav-btn">Logout</button></a
+        >
+        <a href="/posts/create" alt="create post" id="create-post-btn"
+          ><button class="nav-btn">Create Post</button></a
+        >
+        <a href="/users/{{.UserName}}" alt="my posts" id="my-posts-btn"
+          ><button class="nav-btn">My Posts</button></a
+        >
+      </div>
+      {{else}}
+      <div class="links">
+        <a href="/register" alt="register"
+          ><button class="nav-btn">Register</button></a
+        >
+        <a href="/login" alt="login"><button class="nav-btn">Login</button></a>
+      </div>
+      {{end}}
+    </nav>
+    <script type="module">
+      let user = "{{.UserName}}";
+
+      console.log(user);
+      import { loadPosts } from "/static/js/displayPosts.js";
+
+      loadPosts(user);
+    </script>
+  </body>
+</html>

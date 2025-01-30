@@ -1,0 +1,137 @@
+/* Container */
+.container {
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f2f5;
+  font-family: 'Roboto', sans-serif;
+  color: #444;
+  max-width: 800px;
+  width: 90%; /* Use a percentage for better responsiveness */
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 110px auto; /* Center the container and add vertical spacing */
+  text-align: left; /* Ensure content alignment */
+}
+
+/* Back to Home */
+.back-home {
+  margin-bottom: 20px;
+}
+
+.back-link {
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: #007bff;
+  transition: color 0.2s ease-in-out;
+}
+
+.back-link:hover {
+  color: #0056b3;
+}
+
+/* Post Header */
+.post-header {
+  margin-bottom: 20px;
+}
+
+.post-title {
+  font-size: 2rem; /* Adjust font size for emphasis */
+  font-weight: bold;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.post-info {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.category-label {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #555; /* Muted text color */
+  background-color: #f5f5f5; /* Light gray background */
+  padding: 5px 10px;
+  border-radius: 5px; /* Rounded corners */
+  display: inline-block;
+  text-align: justify; /* Makes it look like a badge */
+  margin: 10px 0; /* Spacing between elements */
+}
+
+.category-label a {
+  /*text-decoration: none; /* Remove underline */
+  color: #007bff; /* Professional link color */
+}
+
+.category-label a:hover {
+  color: #0056b3; /* Darker shade for hover */
+}
+
+/* Post Content */
+.post-content {
+  font-size: 1rem;
+  color: #444;
+  padding: 40px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+  /*white-space: pre-wrap; /* Preserve line breaks */
+  font-size: 1.2rem;
+  /* line-height: 1.6; */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    align-items: flex-start; /* Adjust alignment for smaller screens */
+  }
+
+  .container {
+    padding: 15px;
+    width: 95%; /* Increase the width for smaller screens */
+  }
+
+  .post-title {
+    font-size: 1.6rem; /* Slightly reduce the font size */
+  }
+
+  .post-content {
+    font-size: 1rem; /* Adjust content size for readability */
+  }
+}
+
+@media (max-width: 480px) {
+  .post-title {
+    font-size: 1.4rem;
+  }
+
+  .post-content {
+    font-size: 0.9rem;
+  }
+}
+
+
+.post-categories-top-right {
+  position: absolute;
+  top: 1rem;   /* adjust as needed */
+  right: 1rem; /* adjust as needed */
+
+  display: flex;
+  gap: 0.5rem; /* space between category badges */
+}
+
+/* Each category badge */
+.post-category-badge {
+  background-color: #eee;
+  color: #333;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  /* optional: style them more distinctly */
+}
