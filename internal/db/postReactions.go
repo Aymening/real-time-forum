@@ -6,8 +6,8 @@ import (
 )
 
 type UserReaction struct {
-	Id        int64  `json:"id"`
-	UserName  string `json:"userId"`
+	// Id        int64  `json:"id"`
+	// UserName  string `json:"userId"`
 	PostId    string `json:"postId"`
 	CommentId string `json:"commentId"`
 	Reaction  string `json:"reaction"`
@@ -17,16 +17,13 @@ func (d *Database) InsertPostReactionInDB(userName string, userReaction UserReac
 	insertReaction := fmt.Sprintf(`INSERT INTO likes(username, post_id, comment_id, reaction) VALUES(?, ?, null,  "%s")`, userReaction.Reaction)
 	stmnt, err := d.db.Prepare(insertReaction)
 	if err != nil {
-		fmt.Println("111111")
 		return err
 	}
-	fmt.Println(userName)
 	postId, err := strconv.Atoi(userReaction.PostId)
 	if err != nil {
 		return err
 	}
 	if _, err := stmnt.Exec(userName, postId); err != nil {
-		fmt.Println("22222222")
 		return err
 	}
 

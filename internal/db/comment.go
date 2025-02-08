@@ -44,21 +44,20 @@ func (d *Database) InsertComment(content, creationDate, userName string, users m
 
 func (d *Database) GetAllCommentsFromDataBase(Comments map[int][]*Comment) error {
 	QueryOfSelectAllComments := `
-SELECT
-    comments.id,
-    comments.content,
-    users.username,
-    comments.post_id,
-    comments.create_date,
-    likes.comment_id,
-    likes.username AS like_username,
-    likes.reaction
-FROM
-    comments
-JOIN users ON comments.user_id = users.id
-LEFT JOIN likes ON comments.id = likes.comment_id
-
-	`
+    SELECT
+        comments.id,
+        comments.content,
+        users.username,
+        comments.post_id,
+        comments.create_date,
+        likes.comment_id,
+        likes.username AS like_username,
+        likes.reaction
+    FROM
+        comments
+    JOIN users ON comments.user_id = users.id
+    LEFT JOIN likes ON comments.id = likes.comment_id
+    `
 
 	rows, err := d.db.Query(QueryOfSelectAllComments)
 	if err != nil {
@@ -76,19 +75,31 @@ LEFT JOIN likes ON comments.id = likes.comment_id
 		if err := rows.Scan(&comment.Id, &comment.Content, &comment.UserName, &comment.PosteID, &comment.CreationDate, &likedComment, &likedUser, &reaction); err != nil {
 			return err
 		}
-		comment.Reactions = make(map[string]string)
-		
-		Comments[comment.PosteID] = append(Comments[comment.PosteID], &comment)
-		
 
-		if likedComment.Valid {
-			comment.Reactions[likedUser.String] = reaction.String
-			if reaction.String == "like" {
-				comment.Likes += 1
-			} else if reaction.String == "dislike" {
-				comment.Dislikes += 1
+		comment.Reactions = make(map[string]string)
+
+		var existingCommentPtr *Comment
+		for _, v := range Comments[comment.PosteID] {
+			if v.Id == comment.Id {
+				existingCommentPtr = v
+				break
 			}
 		}
+
+		if existingCommentPtr == nil {
+			Comments[comment.PosteID] = append(Comments[comment.PosteID], &comment)
+			existingCommentPtr = &comment
+		}
+
+		if likedComment.Valid {
+			existingCommentPtr.Reactions[likedUser.String] = reaction.String
+			if reaction.String == "like" {
+				existingCommentPtr.Likes++
+			} else if reaction.String == "dislike" {
+				existingCommentPtr.Dislikes++
+			}
+		}
+
 	}
 	return nil
 }

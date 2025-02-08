@@ -7,12 +7,15 @@
   <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
   <link rel="stylesheet" type="text/css" href="/static/css/post.css" />
   <link rel="stylesheet" type="text/css" href="/static/css/comments.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/alert.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <title>Post</title>
 </head>
 
 <body>
+
+  <div id="customAlert"></div>
 
   {{if .UserName}}
   <!-- Header -->
@@ -26,7 +29,6 @@
       <button class="dropdown-button">{{.UserName}} <i class="fa fa-caret-down" aria-hidden="true"></i></button>
       <div class="dropdown-menu">
         <a href="/logout" alt="logout" id="logout-btn" title="Logout">Logout</a>
-        <a alt="create post" id="create-post-btn"> + Create</a>
       </div>
     </div>
   </header>
@@ -53,7 +55,7 @@
       <a href="/" class="back-link">&larr; Back to Home</a>
     </div>
     <!-- Post Header -->
-    <div class="post" data-post-id="{{.Post.Id}}">
+    <div class="post1" data-post-id="{{.Post.Id}}">
       <div class="post-header">
         <h3 id="postTitle" class="post-title"> {{.Post.Title}} </h3>
         <p id="postInfo" class="post-info"> Posted by {{.Post.User}} on {{.Post.CreationDate}}</p>
@@ -116,15 +118,14 @@
       ))
 
       document.getElementById('commentForm').addEventListener('submit', async function (event) {
-        console.log("click")
-        event.preventDefault(); // Prevent form from reloading the page
+        event.preventDefault();
         await CreateComments(parseInt(IdPost), () => userReactions(
-        ".comment-item",
-        "/api/comments/",
-        "/comment/reaction/",
-        userName,
-        IdPost
-      )); 
+          ".comment-item",
+          "/api/comments/",
+          "/comment/reaction/",
+          userName,
+          IdPost
+        ));
 
       });
     </script>

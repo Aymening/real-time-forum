@@ -16,6 +16,7 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 		"css/home.css":           true,
 		"css/post.css":           true,
 		"css/styles.css":         true,
+		"css/alert.css":          true,
 		"css/comments.css":       true,
 		"css/error.css":          true,
 		"js/register.js":         true,
@@ -25,6 +26,8 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 		"js/createPost.js":       true,
 		"js/createComment.js":    true,
 		"js/reaction.js":         true,
+		"js/alert.js":            true,
+		"img/icon.png":           true,
 	}
 	path := r.URL.Path[len("/static/"):]
 	if allowedFiles[path] {

@@ -3,16 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="/static/css/styles.css"/>
+  <link rel="stylesheet" type="text/css" href="../static/css/styles.css"/>
+  <link rel="stylesheet" type="text/css" href="/static/css/alert.css">
+  <link rel="icon" href="../static/img/icon.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <title>Register</title>
 </head>
 <body>
+  <div id="customAlert"></div>
   <div class="container">
     <h1>Sign Up</h1>
     <p>Welcome back! Register to access the Forum Chat platform.</p>
     <form id="registerForm">
-  
+      
         <input type="text" id="name" name="name" placeholder="Username" required>
         <span id="nameError" class="error"></span>
 
@@ -21,7 +24,8 @@
 
         <input type="password" id="password" name="password" placeholder="Password" required>
         <span id="passwordError" class="error"></span>
-
+       
+        <span id="Error" class="error last-error"></span>
         <button type="submit">Continue</button>
     </form>
     <div class="footer">
@@ -29,7 +33,7 @@
       <a href="/login">Sign In</a>
     </div>
   </div>
-  <script src="/static/js/register.js"></script>
+  <script type="module" src="/static/js/register.js"></script>
 </body>
 </html>
 

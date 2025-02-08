@@ -1,3 +1,6 @@
+import { escapeHTML } from "/static/js/createComment.js"
+import { showAlert } from "/static/js/alert.js";
+
 export const fetchApi = async (url) => {
   try {
     const response = await fetch(url, {
@@ -16,44 +19,8 @@ export const fetchApi = async (url) => {
   }
 };
 
-// const createScrollPagination = (posts, displayCallback) => {
-//   let startIndex = 0;
-//   let endIndex = 5;
-//   let isLoading = false;
+export const getPosts = async (UserName, userReactions) => {
 
-//   displayCallback(posts.slice(0, endIndex));
-
-//   const handleScroll = () => {
-//     if (isLoading) return;
-
-//     const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-//     const scrolled = window.scrollY;
-
-//     if (Math.ceil(scrolled) >= scrollable && posts.length > endIndex) {
-//       isLoading = true;
-
-//       startIndex = endIndex;
-//       endIndex = Math.min(endIndex + 5, posts.length);
-
-//       displayCallback(posts.slice(startIndex, endIndex), true);
-
-//       isLoading = false;
-//     }
-//   };
-
-//   // Clean up previous event listeners before adding new one
-//   window.removeEventListener('scroll', handleScroll);
-//   window.addEventListener('scroll', handleScroll);
-
-//   return () => window.removeEventListener('scroll', handleScroll);
-// };
-
-// const scrollingPosts = (posts) => {
-//   if (!posts || !posts.length) return;
-//   return createScrollPagination(posts, DisplayAllPosts);
-// };
-
-export const getPosts = async (UserName, displayCallback) => {
   const handleClick = async (e) => {
     const category = e.target.dataset.category;
     const isClickOnAllPosts = e.target.id === 'All-Posts';
@@ -82,30 +49,21 @@ export const getPosts = async (UserName, displayCallback) => {
       currentPosts = await loadPosts(input, flag)
     }
     if (currentPosts) {
-      DisplayAllPosts(currentPosts)
-      displayCallback()
+      DisplayAllPosts(currentPosts, userReactions)
     }
   };
 
   let currentPosts = await loadPosts()
 
   if (currentPosts) {
-    DisplayAllPosts(currentPosts)
-    displayCallback()
+    DisplayAllPosts(currentPosts, userReactions)
   }
 
   document.removeEventListener('click', handleClick);
   document.addEventListener('click', handleClick);
 };
 
-// export const GoToTop = () => {
-//   if ('scrollRestoration' in history) {
-//     history.scrollRestoration = 'manual';
-//   }
-//   window.scrollTo(0, 0);
-// }
-
-export const loadPosts = async (input, flag) => {
+const loadPosts = async (input, flag) => {
   let apiData;
   let posts = [];
   let postsId = [];
@@ -113,15 +71,20 @@ export const loadPosts = async (input, flag) => {
 
 
   const isGategory = categories.includes(input)
-  const isUser = input && !isGategory;
+  const isUser = input && !isGategory
 
-
+  
   if (isUser) {
     apiData = await fetchApi(`/api/users/${input}`);
   } else {
     apiData = await fetchApi(`/api/posts`)
   }
-  if (isUser) {
+  
+  if (input && !isGategory && isUser && !flag) {
+    return showAlert("Please enter the right category")
+  }
+  
+  if (isUser && flag) {
     if (flag === 'myPosts') {
       posts = apiData?.posts || [];
     } else if (flag === 'myLikes') {
@@ -151,28 +114,30 @@ const GetPostFromIds = async (postsId) => {
 }
 
 const FilterByCategory = (allPosts, category) => {
-  return allPosts.filter(obj => obj.categories.includes(category.toLowerCase()))
+  if (allPosts) {
+    return allPosts.filter(obj => obj.categories.includes(category.toLowerCase()))
+  }
+ 
 }
 
-// Function to create a post element
-export const RenderPosts = function (post) {
+const RenderPosts = function (post) {
   const postElement = document.createElement("div");
   postElement.className = "post";
   postElement.dataset.postId = post.id;
-  const categoryLinks = post.categories
+  const categoryLinks = post.categories || []
     .map(cat => `<a>${cat}</a>`)
     .join(" | ");
   postElement.innerHTML = `
       <div>
           <div class="headers">
-              <span class="username">${post.user}</span>
+              <span class="username">${escapeHTML(post.user)}</span>
               <span class="date">${post.creationDate}</span>
           </div>
           <div class="category-label">
-              Categories: ${categoryLinks}
+              Categories: <a>${categoryLinks}</a>
           </div>
-          <div class="title">${post.title}</div>
-          <div class="content">${post.content}</div>
+          <div class="title">${escapeHTML(post.title)}</div>
+          <div class="content">${escapeHTML(post.content)}</div>
           <a href="/post?id=${post.id}" class="comment-link">See All Comments</a>
           <div class="reactions">
           <div class="like-div">
@@ -194,19 +159,21 @@ export const RenderPosts = function (post) {
   return postElement;
 }
 
-// Display posts dynamically :
-const DisplayAllPosts = function (posts) {
+const DisplayAllPosts = function (posts, callBackReactions) {
 
   const postContainer = document.getElementById("post-container");
   if (!postContainer) {
     console.error("post-container element not found!");
     return;
   }
-  // if (!isLoadPosts) {
+  
   postContainer.innerHTML = ""
+
   posts.forEach(post => {
     const postElement = RenderPosts(post);
     postContainer.appendChild(postElement);
   });
+
+  callBackReactions(posts)
 
 };

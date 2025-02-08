@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/alert.css">
+    <link rel="icon" href="../static/img/icon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>login</title>
 </head>
 
 <body>
+    <div id="customAlert"></div>
     <body>
         <div class="container">
             <h1>Sign In</h1>
@@ -21,6 +24,8 @@
                 <span id="emailError" class="error"></span>
                 <input type="password" id="password" name="password" placeholder="Password" required>
                 <span id="passwordError" class="error"></span>
+
+                <span id="Error" class="error"></span>
                 <button type="submit" class="submit-btn" >Continue</button>
             </form>
             <div class="footer">
@@ -28,7 +33,7 @@
                 <a href="/register">Sign Up</a>
             </div>
         </div>
-        <script src="/static/js/login.js"></script>
+        <script type="module" src="/static/js/login.js"></script>
 </body>
 
 </html>

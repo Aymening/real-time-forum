@@ -1,6 +1,12 @@
 .error {
   color: #a65cff;
   text-align: center;
+  margin-bottom:10px;
+  display: block;
+}
+.last-error{
+  margin-top: 12px;
+  margin-bottom: 0;
 }
 
 * {
@@ -47,6 +53,10 @@ input[type="password"] {
   border-radius: 10px;
   transition: border-color 0.3s;
 }
+input[type="password"] {
+
+  margin-bottom: 0px; 
+}
 
 input[type="email"]:focus,
 input[type="text"]:focus,
@@ -63,8 +73,9 @@ button {
   border: none;
   border-radius: 10px;
   font-size: 16px;
-  transition: background 0.3s;
+  transition: background-color 0.3s;
   cursor: pointer;
+  margin-top: 15px;
 }
 
 button:hover {

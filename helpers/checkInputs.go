@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
@@ -67,21 +68,18 @@ func isValidPassword(password string) bool {
 	return false
 }
 
-func IsValidPost(title, content string) *db.Post {
-	post := &db.Post{
-		Errors: make(map[string]string),
-	}
-
+func IsValidPost(title, content string) error {
 	switch {
 	case title == "":
-		post.Errors["EmptyTitle"] = "Please enter a title!!"
+		return fmt.Errorf("please enter a title")
 	case content == "":
-		post.Errors["EmptyContent"] = "Please enter a content!!"
+		return fmt.Errorf("please enter a content")
 	}
 
-	return post
+	return nil
 }
 
+/********************** JsonResponse Function ***********************/
 func JsonResponse(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)

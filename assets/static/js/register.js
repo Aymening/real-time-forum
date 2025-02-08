@@ -1,3 +1,5 @@
+import { showAlert } from "/static/js/alert.js";
+
 const form = document.getElementById('registerForm');
 
 form.addEventListener('submit', async (event) => {
@@ -25,9 +27,9 @@ form.addEventListener('submit', async (event) => {
         isValid = false;
     }
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.+[@$!%*?&])[a-zA-Z\d@$!%*#?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.+[@$!-_%*?&])[a-zA-Z\d@$!-_%*#?&]{8,}$/;
     if (!passwordRegex.test(password)) {
-        document.getElementById('passwordError').innerText = 'your password should include at least one uppercase letter, one lowercase letter, a number, and a special character 😅';
+        document.getElementById('passwordError').innerText = 'your password needs to have a minimum of 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character 😅';
         isValid = false;
     }
 
@@ -38,33 +40,22 @@ form.addEventListener('submit', async (event) => {
             body: JSON.stringify({ 'name': name, 'email': email, 'password': password })
         })
             .then(response => {
-                console.log(response.status);
-
                 if (response.ok) {
                     response.json();
-                    console.log("1")
                     window.location.href = "/login";
                 } else if (response.status === 409) {
-                    console.log("2")
                     return response.json().then(data => {
                         throw new Error(data.message);
                     });
                 } else {
                     return response.json().then(data => {
-                        console.log("3")
-                        alert(data.message);
+                        showAlert(data.message);
                     });
                 }
             })
 
-            // .then(data => {
-            //     console.log('Inscription valid', data);
-            //     window.location.href = "/login";
-            // })
-
             .catch(error => {
-                console.error('Failed to fetch page: ', error);
-                document.getElementById('emailError').innerText = error.message;
+                document.getElementById('Error').innerText = error.message;
             })
     }
 });

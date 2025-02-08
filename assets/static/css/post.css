@@ -31,17 +31,21 @@
   color: #0056b3;
 }
 
-/* Post Header */
 .post-header {
   margin-bottom: 20px;
 }
 
 .post-title {
-  font-size: 2rem; /* Adjust font size for emphasis */
+  font-size: 2rem;
   font-weight: bold;
   margin-bottom: 10px;
   line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%; 
 }
+
 
 .post-info {
   font-size: 0.9rem;
@@ -118,11 +122,11 @@
 
 .post-categories-top-right {
   position: absolute;
-  top: 1rem;   /* adjust as needed */
-  right: 1rem; /* adjust as needed */
+  top: 1rem;   
+  right: 1rem; 
 
   display: flex;
-  gap: 0.5rem; /* space between category badges */
+  gap: 0.5rem; 
 }
 
 /* Each category badge */
@@ -133,5 +137,4 @@
   padding: 4px 8px;
   border-radius: 12px;
   display: inline-block;
-  /* optional: style them more distinctly */
 }

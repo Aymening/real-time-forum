@@ -5,190 +5,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/alert.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="icon" href="../static/img/5539745.png">
+  <link rel="icon" href="../static/img/icon.png">
   <title>Home</title>
 </head>
 
-<style>
-  /* General chat container styling (live chat style) */
-  #chat-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 300px;
-    max-height: 400px;
-    background-color: #007bff;
-    /* Blue theme */
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #0056b3;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-    z-index: 1000;
-  }
-
-  /* Individual chat message styling */
-  .message {
-    max-width: 80%;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  /* Style for outgoing messages (sender's messages) */
-  .outgoing {
-    align-self: flex-end;
-    background-color: #4f24c5; 
-    color: white;
-    /*  */
-  }
-
-  /* Style for incoming messages (receiver's messages) */
-  .incoming {
-    align-self: flex-start;
-    background-color: #dddddd;
-    color: black;
-  }
-
-  /* Input field and button styling */
-  #message-input {
-    width: 80%;
-    padding: 10px;
-    border: 1px solid #aeb1b5;
-    border-radius: 5px;
-    font-size: 14px;
-    margin-top: 10px;
-    background-color: white;
-  }
-
-  #send-message {
-    padding: 10px 20px;
-    background-color: #4337ca;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-
-  #send-message:hover {
-    background-color: #020084;
-  }
-
-  /* Chat box minimize/maximize button */
-  #chat-container .minimize-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: transparent;
-    color: white;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-  }
-
-  #chat-container .minimized {
-    display: none;
-  }
-
-  /* Chat box header (optional) */
-  #chat-container .chat-header {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-</style>
-
-<!-- chats -->
-<div id="chat-container">
-  <!-- Optional Header for chat box -->
-  <div class="chat-header">Live Chat</div>
-  <button class="minimize-btn" onclick="toggleChat()">-</button>
-
-  <div id="messages-container"></div> <!-- Display incoming messages -->
-  <input type="text" id="message-input" placeholder="Type a message...">
-  <button id="send-message">Send</button>
-</div>
-
-<script>
-  // Minimize/Maximize the chat window
-  function toggleChat() {
-    const chatContainer = document.getElementById("chat-container");
-    chatContainer.classList.toggle("minimized");
-  }
-
-  // WebSocket connection
-  const socket = new WebSocket("ws://localhost:8228/ws/chat");
-
-  socket.onopen = function () {
-    console.log("Connected to WebSocket");
-  };
-
-  socket.onmessage = function (event) {
-    const message = event.data;
-    console.log("New message:", message);
-
-    // Handle incoming message (add to chat UI)
-    const messagesContainer = document.getElementById("messages-container");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message", "incoming"); // Mark as incoming message
-    messageElement.textContent = message;
-    messagesContainer.appendChild(messageElement);
-  };
-
-  socket.onerror = function (error) {
-    console.log("WebSocket error:", error);
-  };
-
-  // Send message when user clicks "Send"
-  const sendMessageButton = document.getElementById("send-message");
-  const messageInput = document.getElementById("message-input");
-
-  sendMessageButton.addEventListener("click", function () {
-    const message = messageInput.value;
-    socket.send(message); // Send message to server
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message", "outgoing"); // Mark as outgoing message
-    messageElement.textContent = message;
-    document.getElementById("messages-container").appendChild(messageElement);
-    messageInput.value = ""; // Clear input
-  });
-</script>
-
-
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="site-title">
-      <i class="fas fa-comments"></i> <!-- Font Awesome icon for chat -->
-      <a href="/" alt="home">Forum Chat</a>
-    </div>
 
-    <div class="dropdown">
-      <input type="hidden" id="Name" value="{{.UserName}}">
-      {{if .}}
+  <div id="customAlert"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="site-title">
+    <i class="fas fa-comments"></i> 
+    <a href="/" alt="home">Forum Chat</a>
+  </div>
+
+  <div class="dropdown">
+    <input type="hidden" id="Name" value="{{.UserName}}">
+    {{if .}}
       <button class="dropdown-button">{{.UserName}} <i class="fa fa-caret-down" aria-hidden="true"></i></button>
       <div class="dropdown-menu">
         <a href="/logout" alt="logout" id="logout-btn" title="Logout">Logout</a>
         <a href="/posts/create" alt="create post" id="create-post-btn"> + Create</a>
       </div>
-      {{else}}
+    {{else}}
       <button class="dropdown-button">Account <i class="fa fa-caret-down" aria-hidden="true"></i></button>
       <div class="dropdown-menu">
         <a href="/login">Login</a>
         <a href="/register">Signup</a>
       </div>
-      {{end}}
-    </div>
-  </header>
+    {{end}}
+  </div>
+</header>
 
 
   <!-- main -->
@@ -213,7 +64,7 @@
 
   <!-- Artical -->
   <div class="artical">
-    <div id="post-container"></div> <!-- Placeholder for posts -->
+    <div id="post-container"></div> 
   </div>
 
   <!-- Hidden form container -->
@@ -224,11 +75,11 @@
       <form action="/create/post" id="postForm" method="post">
         <div class="form-group">
           <label for="title">Title:</label>
-          <input type="text" id="title" name="title" placeholder="Please provide a title for your post..." required>
+          <input type="text" id="title" maxlength="250" name="title" placeholder="Please provide a title for your post..." required>
         </div>
         <div class="form-group">
           <label for="content">Content:</label>
-          <textarea id="content" name="content" placeholder="Write your post here..." rows="5" required></textarea>
+          <textarea id="content" maxlength="3000" name="content" placeholder="Write your post here..." rows="5" required></textarea>
         </div>
         <fieldset>
           <legend>Categories:</legend>
@@ -246,57 +97,18 @@
   </div>
 
 
-
-  <!-- <script type="module">
-    // WebSocket connection
-    const socket = new WebSocket("ws://localhost:8228/ws/chat");
-
-    socket.onopen = function () {
-      console.log("Connected to WebSocket");
-    };
-
-    socket.onmessage = function (event) {
-      const message = event.data;
-      console.log("New message:", message);
-
-      // Handle incoming message (add to chat UI)
-      const chatContainer = document.getElementById("chat-container");
-      const messageElement = document.createElement("div");
-      messageElement.textContent = message;
-      chatContainer.appendChild(messageElement);
-    };
-
-    socket.onerror = function (error) {
-      console.log("WebSocket error:", error);
-    };
-
-    // Send message when user types
-    const sendMessageButton = document.getElementById("send-message");
-    const messageInput = document.getElementById("message-input");
-
-    sendMessageButton.addEventListener("click", function () {
-      const message = messageInput.value;
-      socket.send(message); // Send message to server
-      messageInput.value = ""; // Clear input
-    });
-  </script> -->
-
-
-
-
   <script type="module" hidden>
-    import { getPosts, } from "/static/js/displayPosts.js";
+    import { getPosts } from "/static/js/displayPosts.js";
     import { userReactions } from "/static/js/reaction.js";
-    // import { createPosts } from "/static/js/createPost.js"
-
+    import { createPosts } from "/static/js/createPost.js"
+   
 
     const UserName = "{{.UserName}}"
     await getPosts(UserName, () => userReactions(".post", "/api/posts/", "/post/reaction/", UserName));
+    await createPosts(UserName, () => getPosts(UserName, () => userReactions(".post", "/api/posts/", "/post/reaction/", UserName)))
 
   </script>
-  {{if .UserName}}
-  <script type="module" src="/static/js/createPost.js" hidden></script>
-  {{else}}
+  {{if not .UserName}}
   <script src="/static/js/permissionDenied.js" hidden></script>
   {{end}}
 </body>

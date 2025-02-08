@@ -6,7 +6,6 @@ btns.forEach(btn => {
         btn.classList.add('Permission-Denied')
         btn.setAttribute('readonly',true)
         btn.addEventListener('click', (e)=>{
-            console.log("test")
             e.preventDefault()
         })
     }

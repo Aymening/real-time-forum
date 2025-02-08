@@ -1,101 +1,91 @@
-// import { getPosts } from "/static/js/displayPosts.js";
+import { showAlert } from "/static/js/alert.js";
 
-async function createPosts() {
+export async function createPosts(userName, displayPostsWithReactions) {
 
-    const selectedCategories = Array.from(
-        document.querySelectorAll('input[name="categories"]:checked')
-    ).map(checkbox => checkbox.value);
-    // const postsContainer=document.getElementById('post-container')
-    const title = document.getElementById('title').value.trim();
-    const content = document.getElementById('content').value.trim();
-
-    // Validate inputs
-    if (!title || !content) {
-        return alert("Please fill in all fields correctly!");
-    }
-    if (selectedCategories.length === 0) {
-        return alert("Please select at least one category!");
+    if (!userName) {
+        return
     }
 
-    const requestBody = {
-        title,
-        content,
-        selectedCategories
-    };
+    const create_post = [document.getElementById('Create-Post'), document.getElementById('create-post-btn')]
 
-    console.log("Data to be sent:", requestBody);
-    try {
-        const response = await fetch('/create/post', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
+    create_post.forEach(btn => {
+
+        btn.addEventListener('click', function (e) {
+            document.getElementById('overlay').style.display = 'flex';
+            e.preventDefault()
         });
+    })
 
-        if (!response.ok) {
-            const errorMessage = await response.json();
-            console.log('Error response:', errorMessage.message);
-            return alert(`${errorMessage.message || 'Failed to create post'}`);
+    document.getElementById('Create-Post').addEventListener('click', function () {
+        document.getElementById('overlay').style.display = 'flex';
+    });
+
+    document.getElementById('closeFormBtn').addEventListener('click', function () {
+        document.getElementById('overlay').style.display = 'none';
+    });
+
+    document.getElementById('postForm').addEventListener('submit', async function (event) {
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        event.preventDefault();
+        
+        if (title.length > 250) {
+            return showAlert("Post title is too long")
+        }
+        if (content.length > 3000) {
+            return showAlert("Post content is too long")
         }
 
-        // Process JSON response
-        const responseData = await response.json();
-        console.log('Response:', responseData);
-        alert(responseData.message);
-        // postsContainer.innerHTML=''
-        // getPosts()
-        // Clear form fields and checkboxes
-        document.getElementById('title').value = '';
-        document.getElementById('content').value = '';
-        document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
-            checkbox.checked = false;
-        });
+        await addPost();
+        document.getElementById('overlay').style.display = 'none';
+        displayPostsWithReactions()
+    });
 
-    } catch (error) {
-        console.error('Unexpected error:', error);
-        alert('An unexpected error occurred. Please try again later.');
+    const addPost = async () => {
+        const selectedCategories = Array.from(
+            document.querySelectorAll('input[name="categories"]:checked')
+        ).map(checkbox => checkbox.value);
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        if (!title || !content) {
+            return showAlert("Please fill in all fields correctly!");
+        }
+        if (selectedCategories.length === 0) {
+            return showAlert("Please select at least one category!");
+        }
+
+        const requestBody = {
+            title,
+            content,
+            selectedCategories
+        };
+
+        try {
+            const response = await fetch('/create/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.json();
+                return showAlert(`${errorMessage.message || 'Failed to create post'}`);
+            }
+
+            const responseData = await response.json();
+            showAlert(responseData.message);
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+        } catch (error) {
+            console.error('Unexpected error:', error);
+            showAlert('An unexpected error occurred. Please try again later.');
+        }
     }
 
 };
-
-const btns = [document.getElementById('Post-Created'), document.getElementById('Likes'), document.getElementById('Create-Post')]
-const create_post = [document.getElementById('Create-Post'),document.getElementById('create-post-btn')]
-
-btns.forEach(btn => {
-    if (btn.classList.contains('Permission-Denied')) {
-        btn.classList.remove('Permission-Denied')
-    }
-});
-
-create_post.forEach(btn=>{
-    
-    btn.addEventListener('click', function (e) {
-        document.getElementById('overlay').style.display = 'flex';
-        e.preventDefault()
-    });
-})
-
-// Show the form when the button is clicked
-document.getElementById('Create-Post').addEventListener('click', function () {
-    document.getElementById('overlay').style.display = 'flex';
-});
-
-// Hide the form when the close button is clicked
-document.getElementById('closeFormBtn').addEventListener('click', function () {
-    document.getElementById('overlay').style.display = 'none';
-});
-
-// Handle form submission
-document.getElementById('postForm').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Prevent form from reloading the page
-    // console.log('Post Created:', postData);
-    // alert('Post created successfully!');
-    await createPosts();
-    // Hide the form after submission
-    document.getElementById('overlay').style.display = 'none';
-    location.reload()
-
-    // Optionally, reset the form
-    // this.reset();
-});

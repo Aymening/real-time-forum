@@ -14,7 +14,6 @@ type Post struct {
 	Content      string            `json:"content"`
 	CreationDate string            `json:"creationDate"`
 	Categories   []string          `json:"categories,omitempty"`
-	Errors       map[string]string `json:"-,omitempty"`
 	Reactions    map[string]string `json:"reactions,omitempty"`
 	Likes        int               `json:"likes,omitempty"`
 	Dislikes     int               `json:"dislikes,omitempty"`
@@ -56,9 +55,9 @@ func (d *Database) InsertCategories(postId int, categories []string) error {
 
 func (d *Database) SelectCategories(categories []string) ([]string, error) {
 	var categoriesIDs []string
-	selectCategories := `SELECT * FROM categories`
+	insertCategories := `SELECT * FROM categories`
 
-	rows, err := d.db.Query(selectCategories)
+	rows, err := d.db.Query(insertCategories)
 	if err != nil {
 		return nil, err
 	}
@@ -111,16 +110,15 @@ func (d *Database) InsertPostWithCategories(users map[string]*User, userName str
 }
 
 func (d *Database) GetPostsFromDB(users map[string]*User, posts *[]*Post) error {
-	selectUsers := `SELECT DISTINCT
+	selectUsers := `SELECT
     users.id,
     users.username,
     posts.id,
     posts.title,
     posts.content,
     posts.creation_date,
-    post_categories.category_id,
     categories.category,
-    likes.username AS like_username,
+    likes.username,
     likes.post_id,
     likes.reaction
 FROM
@@ -128,7 +126,7 @@ FROM
     LEFT JOIN posts ON users.id = posts.user_id
     LEFT JOIN post_categories ON posts.id = post_categories.post_id
     LEFT JOIN categories ON post_categories.category_id = categories.id
-    LEFT JOIN likes ON posts.id = likes.post_id
+    LEFT JOIN likes ON users.username = likes.username
 ORDER BY
     posts.creation_date DESC`
 
@@ -151,14 +149,12 @@ ORDER BY
 			title        sql.NullString
 			content      sql.NullString
 			creationDate sql.NullTime
-			categoryId   sql.NullInt64
 			category     sql.NullString
 		)
 
-		if err := rows.Scan(&u.Id, &u.UserName, &postId, &title, &content, &creationDate, &categoryId, &category, &likedUser, &likedPost, &reaction); err != nil {
+		if err := rows.Scan(&u.Id, &u.UserName, &postId, &title, &content, &creationDate, &category, &likedUser, &likedPost, &reaction); err != nil {
 			return err
 		}
-
 		u.Reactions = make(map[string][]int)
 		if _, userExists := users[u.UserName]; !userExists {
 			users[u.UserName] = &u
@@ -182,8 +178,10 @@ ORDER BY
 
 			}
 		}
-		if categoryId.Valid && category.Valid {
-			post.Categories = append(post.Categories, category.String)
+		if category.Valid {
+			if !slices.Contains(post.Categories, category.String) {
+				post.Categories = append(post.Categories, category.String)
+			}
 		}
 
 		if likedUser.Valid && likedPost.Valid && reaction.Valid {
@@ -201,6 +199,9 @@ ORDER BY
 			}
 
 			user := users[likedUser.String]
+			if user == nil {
+				continue
+			}
 			if _, exists := user.Reactions[likedPost.String]; !exists {
 				postId, err := strconv.Atoi(likedPost.String)
 				if err != nil {
@@ -212,9 +213,12 @@ ORDER BY
 
 			}
 		}
+
 	}
+
 	if rows.Err() != nil {
 		return err
 	}
+
 	return nil
 }

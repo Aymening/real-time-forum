@@ -24,13 +24,11 @@ type Endpoints struct {
 	CommentEndpoint string `json:"comments"`
 }
 
-// https://medium.com/@oshankkumar/project-layout-of-golang-web-application-bae212d8f4b6
-
 func (api *Api) ApiHome(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
-		return
-	}
+	// if r.Method != http.MethodGet {
+	// 	helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
+	// 	return
+	// }
 	api.Endpoints = Endpoints{
 		UsersEndpoint:   "/api/users",
 		PostsEndpoint:   "/api/posts",
@@ -43,10 +41,10 @@ func (api *Api) ApiHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *Api) GetPosts(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
+	// 	return
+	// }
 
 	api.Endpoints.PostsEndpoint = r.URL.Path
 
@@ -56,10 +54,10 @@ func (api *Api) GetPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *Api) GetUsers(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
+	// 	return
+	// }
 
 	api.Endpoints.UsersEndpoint = r.URL.Path
 
@@ -69,10 +67,10 @@ func (api *Api) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *Api) GetComment(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
+	// 	return
+	// }
 
 	idQuery := r.URL.Path[len("/api/comments/"):]
 
@@ -97,11 +95,10 @@ func (api *Api) GetComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *Api) GetUser(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodPost {
-		helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	helpers.ExecuteTmpl(w, "error.html", http.StatusMethodNotAllowed, "Method Not Allowed!", nil)
+	// 	return
+	// }
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -109,7 +106,7 @@ func (api *Api) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	user, exists := api.Users[UserName]
 	if !exists {
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("This ${%s} does not exist", UserName)})
 		return
@@ -143,7 +140,6 @@ func (api *Api) DeleteCommentReactionInApi(loggedUser string, postId, commentId 
 }
 
 func (api *Api) AddCommentReactionInApi(loggedUser string, postId, commentId int, userReaction db.UserReaction) {
-	fmt.Println("add Comment Reaction In Api")
 	var post *db.Post
 	for _, p := range api.Posts {
 		if postId == p.Id {
@@ -159,11 +155,9 @@ func (api *Api) AddCommentReactionInApi(loggedUser string, postId, commentId int
 			}
 			comment.Reactions[loggedUser] = userReaction.Reaction
 			if userReaction.Reaction == "like" {
-				fmt.Println("add like reaction")
-				comment.Likes = +1
+				comment.Likes++
 			} else if userReaction.Reaction == "dislike" {
-				fmt.Println("add dislike reaction")
-				comment.Dislikes = +1
+				comment.Dislikes++
 			}
 		}
 	}
@@ -171,7 +165,6 @@ func (api *Api) AddCommentReactionInApi(loggedUser string, postId, commentId int
 
 func (api *Api) DeletePostReactionInApi(loggedUser string, postId int, userReaction db.UserReaction) {
 	var post *db.Post
-	fmt.Println("reaction", userReaction.Reaction)
 	for _, p := range api.Posts {
 		if postId == p.Id {
 			post = p
@@ -206,33 +199,22 @@ func (api *Api) AddPostReactionInApi(loggedUser string, postId int, userReaction
 	}
 	post.Reactions[loggedUser] = userReaction.Reaction
 	user := api.Users[loggedUser]
-	fmt.Println("liked post: ", post)
-	fmt.Println("liked user: ", user)
+
+	if user.Reactions == nil {
+		user.Reactions = make(map[string][]int)
+	}
 
 	if userReaction.Reaction == "like" {
 		post.Likes += 1
-		fmt.Println("liked : ", userReaction.Reaction, post)
-		if user.Reactions == nil {
-			user.Reactions = make(map[string][]int)
-		}
 		user.Reactions["like"] = append(user.Reactions["like"], postId)
 		user.Reactions["dislike"] = removePostIdFromReactions(postId, user.Reactions["dislike"])
 	} else if userReaction.Reaction == "dislike" {
-		fmt.Println(userReaction.Reaction)
 		post.Dislikes += 1
-		fmt.Println("disliked : ", post)
 		user.Reactions["dislike"] = append(user.Reactions["dislike"], postId)
 		user.Reactions["like"] = removePostIdFromReactions(postId, user.Reactions["like"])
 	}
 
-	// for _, p := range api.Posts {
-	// 	if postId == p.Id {
-	// 		post = p
-	// 		break
-	// 	}
-	// }
 	api.Users[loggedUser] = user
-	fmt.Println("here", api.Users[loggedUser])
 }
 
 func removePostIdFromReactions(postId int, posts []int) []int {

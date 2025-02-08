@@ -3,13 +3,13 @@ package db
 func (db *Database) CreateAllTablesInDatabase() []string {
 
 	TableUsers := `
-			-- DROP TABLE IF EXISTS users;
-			-- DROP TABLE IF EXISTS posts;
-			-- DROP TABLE IF EXISTS comments;
-			-- DROP TABLE IF EXISTS categories;
-			-- DROP TABLE IF EXISTS likes; 
-			-- DROP TABLE IF EXISTS post_category;
-			-- DROP TABLE IF EXISTS categories;
+			 -- DROP TABLE IF EXISTS users;
+			 -- DROP TABLE IF EXISTS posts;
+			 -- DROP TABLE IF EXISTS comments;
+			 -- DROP TABLE IF EXISTS categories;
+			 -- DROP TABLE IF EXISTS likes; 
+			 -- DROP TABLE IF EXISTS post_categories;
+			 -- DROP TABLE IF EXISTS categories;
 
 			CREATE TABLE IF NOT EXISTS users (
     				id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,7 +92,7 @@ func (db *Database) CreateAllTablesInDatabase() []string {
 }
 
 func (db *Database) ExecuteAllTableInDataBase() error {
-	
+
 	for _, Table := range db.CreateAllTablesInDatabase() {
 		_, err := db.db.Exec(Table)
 		if err != nil {

@@ -1,3 +1,5 @@
+import { showAlert } from "/static/js/alert.js";
+
 const form = document.getElementById('loginForm');
 form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -13,8 +15,6 @@ form.addEventListener('submit', (event) => {
         body: JSON.stringify({ 'email': email, 'password': password })
     })
         .then(response => {
-            console.log(response.status);
-
             if (response.ok) {
                 response.json()
                 window.location.href = "/";
@@ -23,18 +23,14 @@ form.addEventListener('submit', (event) => {
                     throw new Error(data.message);
                 });
             } else {
+                
                 return response.json().then(data => {
-                    alert(data.message);
+                    showAlert(data.message);
                 });
             }
         })
-        // .then(data => {
-        //     console.log('login valid', data);
-        //     window.location.href = "/";
-        // })
-
+     
         .catch(error => {
-           // console.error('Failed to fetch page: ', error)
-            document.getElementById('emailError').innerText = error.message;
+            document.getElementById('Error').innerText = error.message;
         })
 })

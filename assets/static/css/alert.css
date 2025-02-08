@@ -1,0 +1,41 @@
+#customAlert {
+    display: none;
+    position: fixed;
+    text-align: center;
+    min-width: 300px;
+    z-index: 100;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #6200ea, #bb86fc);
+    color: #ffffff;
+    padding: 30px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgb(110 19 236 / 35%);
+    font-size: 1.1rem;
+    font-weight: 600;
+    z-index: 1000;
+    animation: slideInAlert 0.5s ease-out, fadeOutAlert 0.5s ease-in 4.5s;
+}
+
+@keyframes slideInAlert {
+    from {
+        top: -50px;
+        opacity: 0;
+    }
+
+    to {
+        top: 20px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutAlert {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}

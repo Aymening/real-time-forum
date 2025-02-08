@@ -79,15 +79,25 @@ func (d *Database) InsertToken(id int, token string) error {
 	return nil
 }
 
-func (d *Database) DatabaseVerification(name, email string) (bool, error) {
+func (d *Database) DatabaseVerification(name, email string) (bool, bool, error) {
 
-	expression := `SELECT EXISTS (SELECT * FROM users WHERE username LIKE ? OR email LIKE ?);`
-	var exists bool
-	err := d.db.QueryRow(expression, name, email).Scan(&exists)
+	// Username Verification
+	usernameExists := false
+	usernameExpression := `SELECT EXISTS (SELECT * FROM users WHERE username LIKE ?);`
+	err := d.db.QueryRow(usernameExpression, name).Scan(&usernameExists)
 	if err != nil {
-		return false, err
+		return false, false, err
 	}
-	return exists, nil
+
+	// email verification
+	emailExists := false
+	emailExpression := `SELECT EXISTS (SELECT * FROM users WHERE email LIKE ?);`
+	err = d.db.QueryRow(emailExpression, email).Scan(&emailExists)
+	if err != nil {
+		return false, false, err
+	}
+
+	return usernameExists, emailExists, nil
 }
 
 func (d *Database) TokenVerification(token string) (string, error) {
