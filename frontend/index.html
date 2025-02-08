@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat-box { width: 400px; height: 300px; border: 1px solid #000; overflow-y: auto; padding: 10px; }
+        .message { padding: 5px; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <h2>Private Chat</h2>
+
+    <input type="text" id="sender" placeholder="Your Name">
+    <input type="text" id="receiver" placeholder="Receiver Name">
+    <br><br>
+
+    <div id="chat-box"></div>
+    <br>
+
+    <input type="text" id="message" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
