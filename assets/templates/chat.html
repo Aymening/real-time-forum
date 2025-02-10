@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/static/css/chat.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Chats</title>
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f4f4f4;
+    }
+
+    .chat-container {
+        display: flex;
+        width: 80%;
+        height: 80vh;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    /* Sidebar */
+    .chat-sidebar {
+        width: 30%;
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .chat-sidebar h2 {
+        margin: 0 0 20px;
+    }
+
+    .chat-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .chat-item:hover,
+    .chat-item.active {
+        background: #34495e;
+    }
+
+    .chat-item img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .chat-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-name {
+        font-weight: bold;
+    }
+
+    .chat-preview {
+        font-size: 0.8em;
+        color: #ccc;
+    }
+
+    /* Chat Window */
+    .chat-window {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        background: #007bff;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        max-width: 60%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+    }
+
+    .received {
+        background: #eee;
+        align-self: flex-start;
+    }
+
+    .sent {
+        background: #007bff;
+        color: white;
+        align-self: flex-end;
+    }
+
+    /* Input Field */
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background: #ddd;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .chat-input button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 5px;
+    }
+
+    .chat-input button:hover {
+        background: #0056b3;
+    }
+</style>
+
+<body>
+    <div class="chat-container">
+        <!-- Sidebar for Conversations -->
+        <div class="chat-sidebar">
+            <h2>Chats</h2>
+            <div class="chat-list">
+                <div class="chat-item active" data-user="Alice">
+                    <img src="/static/img/user1.png" alt="Alice">
+                    <div class="chat-info">
+                        <span class="chat-name">Alice</span>
+                        <span class="chat-preview">Hey, how's it going?</span>
+                    </div>
+                </div>
+                <div class="chat-item" data-user="Bob">
+                    <img src="/static/img/user2.png" alt="Bob">
+                    <div class="chat-info">
+                        <span class="chat-name">Bob</span>
+                        <span class="chat-preview">Let's meet tomorrow!</span>
+                    </div>
+                </div>
+                <div class="chat-item" data-user="Charlie">
+                    <img src="/static/img/user3.png" alt="Charlie">
+                    <div class="chat-info">
+                        <span class="chat-name">Charlie</span>
+                        <span class="chat-preview">Check this out!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window">
+            <div class="chat-header">
+                <h3 id="chat-title">Alice</h3>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message received">
+                    <p>Hey, how's it going?</p>
+                </div>
+                <div class="message sent">
+                    <p>Pretty good! How about you?</p>
+                </div>
+                <div class="message received">
+                    <p>Just chilling. Got any plans later?</p>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Type a message...">
+                <button id="send-btn"><i class="fa fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const chatItems = document.querySelectorAll(".chat-item");
+            const chatTitle = document.getElementById("chat-title");
+            const chatMessages = document.getElementById("chat-messages");
+
+            const chatData = {
+                Alice: [
+                    { type: "received", text: "Hey, how's it going?" },
+                    { type: "sent", text: "Pretty good! How about you?" },
+                    { type: "received", text: "Just chilling. Got any plans later?" },
+                ],
+                Bob: [
+                    { type: "received", text: "Let's meet tomorrow!" },
+                    { type: "sent", text: "Sounds great! What time?" },
+                ],
+                Charlie: [
+                    { type: "received", text: "Check this out!" },
+                    { type: "sent", text: "Wow, that's awesome!" },
+                ],
+            };
+
+            chatItems.forEach(item => {
+                item.addEventListener("click", () => {
+                    const user = item.getAttribute("data-user");
+                    chatTitle.textContent = user;
+
+                    chatMessages.innerHTML = "";
+                    chatData[user].forEach(msg => {
+                        const messageDiv = document.createElement("div");
+                        messageDiv.classList.add("message", msg.type);
+                        messageDiv.innerHTML = `<p>${msg.text}</p>`;
+                        chatMessages.appendChild(messageDiv);
+                    });
+
+                    document.querySelector(".chat-item.active")?.classList.remove("active");
+                    item.classList.add("active");
+                });
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

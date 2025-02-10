@@ -16,30 +16,36 @@
 
   <div id="customAlert"></div>
 
-<!-- Header -->
-<header class="header">
-  <div class="site-title">
-    <i class="fas fa-comments"></i> 
-    <a href="/" alt="home">Forum Chat</a>
-  </div>
+  <!-- Header -->
+  <header class="header">
+    <div class="site-title">
+      <i class="fas fa-comments"></i>
+      <a href="/" alt="home">Forum Chat</a>
+    </div>
 
-  <div class="dropdown">
-    <input type="hidden" id="Name" value="{{.UserName}}">
-    {{if .}}
+    <!-- Chat Icon -->
+    <a href="./chat" class="chat-icon">
+      <i class="fa fa-comment"></i>
+    </a>
+
+
+    <div class="dropdown">
+      <input type="hidden" id="Name" value="{{.UserName}}">
+      {{if .}}
       <button class="dropdown-button">{{.UserName}} <i class="fa fa-caret-down" aria-hidden="true"></i></button>
       <div class="dropdown-menu">
         <a href="/logout" alt="logout" id="logout-btn" title="Logout">Logout</a>
         <a href="/posts/create" alt="create post" id="create-post-btn"> + Create</a>
       </div>
-    {{else}}
+      {{else}}
       <button class="dropdown-button">Account <i class="fa fa-caret-down" aria-hidden="true"></i></button>
       <div class="dropdown-menu">
         <a href="/login">Login</a>
         <a href="/register">Signup</a>
       </div>
-    {{end}}
-  </div>
-</header>
+      {{end}}
+    </div>
+  </header>
 
 
   <!-- main -->
@@ -64,7 +70,7 @@
 
   <!-- Artical -->
   <div class="artical">
-    <div id="post-container"></div> 
+    <div id="post-container"></div>
   </div>
 
   <!-- Hidden form container -->
@@ -75,11 +81,13 @@
       <form action="/create/post" id="postForm" method="post">
         <div class="form-group">
           <label for="title">Title:</label>
-          <input type="text" id="title" maxlength="250" name="title" placeholder="Please provide a title for your post..." required>
+          <input type="text" id="title" maxlength="250" name="title"
+            placeholder="Please provide a title for your post..." required>
         </div>
         <div class="form-group">
           <label for="content">Content:</label>
-          <textarea id="content" maxlength="3000" name="content" placeholder="Write your post here..." rows="5" required></textarea>
+          <textarea id="content" maxlength="3000" name="content" placeholder="Write your post here..." rows="5"
+            required></textarea>
         </div>
         <fieldset>
           <legend>Categories:</legend>
@@ -101,7 +109,7 @@
     import { getPosts } from "/static/js/displayPosts.js";
     import { userReactions } from "/static/js/reaction.js";
     import { createPosts } from "/static/js/createPost.js"
-   
+
 
     const UserName = "{{.UserName}}"
     await getPosts(UserName, () => userReactions(".post", "/api/posts/", "/post/reaction/", UserName));
