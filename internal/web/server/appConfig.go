@@ -4,6 +4,7 @@ import (
 	"forum/internal/api"
 	"forum/internal/db"
 	"forum/internal/web/handlers"
+	"net/http"
 )
 
 type App struct {
@@ -27,14 +28,18 @@ func NewApp() (*App, error) {
 			DB: database,
 		},
 		Api: api.Api{
-			Users: make(map[string]*db.User),
-			Comments : make(map[int][]*db.Comment),
+			Users:    make(map[string]*db.User),
+			Comments: make(map[int][]*db.Comment),
 		},
 		DB: database,
 	}, nil
 }
 
 func InitApp() (*App, error) {
+
+	// mux := http.NewServeMux()
+	// mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	app, err := NewApp()
 	if err != nil {
 		return nil, err
@@ -43,7 +48,7 @@ func InitApp() (*App, error) {
 	if err := app.DB.GetPostsFromDB(app.Api.Users, &app.Api.Posts); err != nil {
 		return nil, err
 	}
-	
+
 	if err := app.DB.GetAllCommentsFromDataBase(app.Api.Comments); err != nil {
 		return nil, err
 	}
@@ -51,4 +56,8 @@ func InitApp() (*App, error) {
 	app.Handlers.Api = &app.Api
 
 	return app, nil
+}
+
+func chatHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./assets/templates/chat.html")
 }
