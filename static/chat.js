@@ -1,23 +1,30 @@
 const socket = new WebSocket("ws://localhost:8080/ws");
 const messageInput = document.getElementById("message-input");
 const messagesDiv = document.getElementById("messages");
+let currentSender = "User1";
+let currentReceiver = "User2";
 
+// Handle WebSocket connection
 socket.onopen = () => {
     console.log("Connected to WebSocket server");
 };
 
 socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
-    const msgElement = document.createElement("div");
-    msgElement.textContent = `${message.sender}: ${message.content}`;
-    messagesDiv.appendChild(msgElement);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Check if the message belongs to the current conversation
+    if (
+        (message.sender === currentSender && message.receiver === currentReceiver) ||
+        (message.sender === currentReceiver && message.receiver === currentSender)
+    ) {
+        addMessage(message.sender, message.content);
+    }
 };
 
 function sendMessage() {
     const message = {
-        sender: "User1", // Replace with dynamic user identification
-        receiver: "User2", // Replace with dynamic user identification
+        sender: currentSender,
+        receiver: currentReceiver,
         content: messageInput.value,
     };
 
@@ -25,18 +32,37 @@ function sendMessage() {
     messageInput.value = "";
 }
 
-function fetchConversation() {
-    fetch("/get-conversation?sender=User1&receiver=User2")
+function fetchConversation(sender, receiver) {
+    fetch(`/get-conversation?sender=${sender}&receiver=${receiver}`)
         .then((response) => response.json())
         .then((data) => {
             messagesDiv.innerHTML = "";
             data.forEach((msg) => {
-                const msgElement = document.createElement("div");
-                msgElement.textContent = `${msg.sender}: ${msg.content}`;
-                messagesDiv.appendChild(msgElement);
+                addMessage(msg.sender, msg.content);
             });
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
 }
 
-fetchConversation(); // Load conversation on page load
+function selectConversation(sender, receiver) {
+    currentSender = sender;
+    currentReceiver = receiver;
+    document.getElementById("current-conversation").textContent = `${sender} & ${receiver}`;
+    fetchConversation(sender, receiver);
+}
+
+function addMessage(sender, content) {
+    const msgElement = document.createElement("div");
+    msgElement.className = `message ${sender === currentSender ? "self" : "other"}`;
+
+    const contentElement = document.createElement("div");
+    contentElement.className = "content";
+    contentElement.textContent = content;
+
+    msgElement.appendChild(contentElement);
+    messagesDiv.appendChild(msgElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Load initial conversation
+fetchConversation(currentSender, currentReceiver);

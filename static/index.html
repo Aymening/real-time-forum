@@ -7,11 +7,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="chat-container">
-        <h1>Real-Time Chat</h1>
-        <div id="messages"></div>
-        <input type="text" id="message-input" placeholder="Type your message..." />
-        <button onclick="sendMessage()">Send</button>
+    
+    <div id="app-container">
+        <!-- Sidebar for Conversations -->
+        <div id="conversation-sidebar">
+            <h2>Conversations</h2>
+            <ul id="conversation-list">
+                <li onclick="selectConversation('User1', 'User2')">User1 & User2</li>
+                <li onclick="selectConversation('User1', 'User3')">User1 & User3</li>
+                <li onclick="selectConversation('User2', 'User3')">User2 & User3</li>
+            </ul>
+        </div>
+
+        <!-- Chat Window -->
+        <div id="chat-container">
+            <h2 id="current-conversation">User1 & User2</h2>
+            <div id="messages"></div>
+            <input type="text" id="message-input" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
 
     <script src="chat.js"></script>
