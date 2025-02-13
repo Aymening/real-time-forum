@@ -163,14 +163,15 @@
         socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
 
-            console.log("test")
+            console.log(message)
+            addMessage(message, JSON.parse(messageInput.dataset.user))
             // Check if the message belongs to the current conversation
-            if (
-                (message.sender === currentSender && message.receiver === currentReceiver) ||
-                (message.sender === currentReceiver && message.receiver === currentSender)
-            ) {
-                // addMessage(message.sender, message.content);
-            }
+            // if (
+            //     (message.sender === currentSender && message.receiver === currentReceiver) ||
+            //     (message.sender === currentReceiver && message.receiver === currentSender)
+            // ) {
+            //     // addMessage(message.sender, message.content);
+            // }
         };
 
         function sendMessage() {

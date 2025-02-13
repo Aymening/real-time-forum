@@ -19,7 +19,7 @@ type App struct {
 	DB       *db.Database
 }
 
-var clients = make(map[*websocket.Conn]bool)
+var clients = make(map[*websocket.Conn]int)
 var broadcast = make(chan entity.Message)
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -151,7 +151,7 @@ func (app *App) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clients[ws] = true
+	clients[ws] = senderID
 	for {
 		var msg entity.Message
 		err := ws.ReadJSON(&msg)
@@ -163,8 +163,17 @@ func (app *App) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		}
 		msg.SenderID = senderID
 		fmt.Println(senderID)
+
 		// // here save messages in database function
 		app.DB.SaveMessage(msg)
+		ws.WriteJSON(msg)
+		for conn, id := range clients {
+			if id == msg.ReceiverID {
+				conn.WriteJSON(msg)
+				break
+			}
+
+		}
 
 	}
 }
