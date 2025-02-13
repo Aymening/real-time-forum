@@ -1,19 +1,37 @@
 package db
 
 import (
-	
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	Id       int64             `json:"id"`
-	UserName string            `json:"name"`
-	Email    string            `json:"email,omitempty"`
-	Password string            `json:"password,omitempty"`
-	Token    string            `json:"-"`
-	Posts    []*Post           `json:"posts,omitempty"`
-	Errors   map[string]string `json:"-,omitempty"`
-	Reactions map[string][]int `json:"reactions,omitempty"`
+	Id        int64             `json:"id"`
+	UserName  string            `json:"name"`
+	Email     string            `json:"email,omitempty"`
+	Password  string            `json:"password,omitempty"`
+	Token     string            `json:"-"`
+	Posts     []*Post           `json:"posts,omitempty"`
+	Errors    map[string]string `json:"-,omitempty"`
+	Reactions map[string][]int  `json:"reactions,omitempty"`
+}
+
+func (d *Database) GetAllUsers() ([]User, error) {
+	rows, err := d.db.Query("SELECT id, username FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.Id, &user.UserName); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }
 
 func (d *Database) InsertUser(users map[string]*User, name, email, Password string) error {

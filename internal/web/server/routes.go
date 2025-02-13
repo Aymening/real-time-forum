@@ -24,8 +24,11 @@ func (a *App) Routes() http.Handler {
 	mux.HandleFunc("/api/users", a.Api.GetUsers)       //
 	mux.HandleFunc("/api/users/", a.Api.GetUser)       //
 
-	// mux.HandleFunc("/ws", HandleWebSocket) 
+	// mux.HandleFunc("/ws", HandleWebSocket)
 	mux.HandleFunc("/chat", chatHandler)
+	mux.HandleFunc("/api/contacts", a.GetUsersHandler)
+	mux.HandleFunc("/api/chat", a.GetChat)
+	mux.HandleFunc("/ws", a.HandleConnections)
 
 	return mux
 }

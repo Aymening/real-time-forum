@@ -1,6 +1,15 @@
 package db
 
 func (db *Database) CreateAllTablesInDatabase() []string {
+	TableMessages := `CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sender INTEGER NOT NULL,
+        receiver INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sender) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (receiver) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+    )`
 
 	TableUsers := `
 			 -- DROP TABLE IF EXISTS users;
@@ -88,7 +97,7 @@ func (db *Database) CreateAllTablesInDatabase() []string {
 					('food')
 			`
 
-	return []string{TableUsers, TableCategories, TablePosts, TablePostsCategories, TableLikes, TableComments, TableInsertCategories}
+	return []string{TableUsers, TableCategories, TablePosts, TablePostsCategories, TableLikes, TableComments, TableInsertCategories, TableMessages}
 }
 
 func (db *Database) ExecuteAllTableInDataBase() error {

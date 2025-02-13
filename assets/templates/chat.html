@@ -10,244 +10,277 @@
 </head>
 
 <style>
+    /* General Styles */
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: center;
-        align-items: center;
         height: 100vh;
-        background: #f4f4f4;
+        background-color: #f4f4f4;
     }
 
-    .chat-container {
+    #app-container {
         display: flex;
-        width: 80%;
-        height: 80vh;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
+        width: 100%;
     }
 
-    /* Sidebar */
-    .chat-sidebar {
-        width: 30%;
-        background: #2c3e50;
+    /* Sidebar for Conversations */
+    #conversation-sidebar {
+        width: 250px;
+        background-color: #333;
         color: white;
         padding: 20px;
-        overflow-y: auto;
+        box-sizing: border-box;
     }
 
-    .chat-sidebar h2 {
-        margin: 0 0 20px;
+    #conversation-sidebar h2 {
+        margin-bottom: 10px;
     }
 
-    .chat-list {
-        display: flex;
-        flex-direction: column;
+    #conversation-sidebar ul {
+        list-style: none;
+        padding: 0;
     }
 
-    .chat-item {
-        display: flex;
-        align-items: center;
+    #conversation-sidebar li {
         padding: 10px;
-        border-radius: 5px;
         cursor: pointer;
-        transition: background 0.3s;
+        background-color: #444;
+        margin-bottom: 5px;
+        border-radius: 4px;
     }
 
-    .chat-item:hover,
-    .chat-item.active {
-        background: #34495e;
+    #conversation-sidebar li:hover {
+        background-color: #555;
     }
 
-    .chat-item img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-
-    .chat-info {
+    /* Chat Container */
+    #chat-container {
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
-    }
-
-    .chat-name {
-        font-weight: bold;
-    }
-
-    .chat-preview {
-        font-size: 0.8em;
-        color: #ccc;
-    }
-
-    /* Chat Window */
-    .chat-window {
-        width: 70%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chat-header {
-        background: #007bff;
-        color: white;
-        padding: 15px;
-        text-align: center;
-        font-size: 1.2em;
-    }
-
-    .chat-messages {
-        flex: 1;
+        background-color: white;
         padding: 20px;
+        box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #chat-container h2 {
+        margin-bottom: 10px;
+    }
+
+    #messages {
+        flex-grow: 1;
         overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .message {
-        max-width: 60%;
+        border: 1px solid #ccc;
         padding: 10px;
-        margin: 5px 0;
+        margin-bottom: 10px;
+    }
+
+    /* Message Styling */
+    .message {
+        margin-bottom: 10px;
+    }
+
+    .message.self {
+        text-align: right;
+    }
+
+    .message.other {
+        text-align: left;
+    }
+
+    .message .content {
+        display: inline-block;
+        max-width: 70%;
+        padding: 10px;
         border-radius: 8px;
+        background-color: #dfdede;
     }
 
-    .received {
-        background: #eee;
-        align-self: flex-start;
-    }
-
-    .sent {
-        background: #007bff;
-        color: white;
-        align-self: flex-end;
+    .message.self .content {
+        background-color: #dcf8c6;
     }
 
     /* Input Field */
-    .chat-input {
-        display: flex;
+    #message-input {
+        width: calc(100% - 85px);
         padding: 10px;
-        background: #ddd;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
     }
 
-    .chat-input input {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        outline: none;
-    }
-
-    .chat-input button {
-        background: #007bff;
+    button {
+        padding: 10px 15px;
+        background-color: #007bff;
         color: white;
         border: none;
-        padding: 10px;
+        border-radius: 4px;
         cursor: pointer;
-        border-radius: 5px;
-        margin-left: 5px;
     }
 
-    .chat-input button:hover {
-        background: #0056b3;
+    button:hover {
+        background-color: #0056b3;
     }
 </style>
 
 <body>
-    <div class="chat-container">
+
+    <div id="app-container">
         <!-- Sidebar for Conversations -->
-        <div class="chat-sidebar">
-            <h2>Chats</h2>
-            <div class="chat-list">
-                <div class="chat-item active" data-user="Alice">
-                    <img src="/static/img/user1.png" alt="Alice">
-                    <div class="chat-info">
-                        <span class="chat-name">Alice</span>
-                        <span class="chat-preview">Hey, how's it going?</span>
-                    </div>
-                </div>
-                <div class="chat-item" data-user="Bob">
-                    <img src="/static/img/user2.png" alt="Bob">
-                    <div class="chat-info">
-                        <span class="chat-name">Bob</span>
-                        <span class="chat-preview">Let's meet tomorrow!</span>
-                    </div>
-                </div>
-                <div class="chat-item" data-user="Charlie">
-                    <img src="/static/img/user3.png" alt="Charlie">
-                    <div class="chat-info">
-                        <span class="chat-name">Charlie</span>
-                        <span class="chat-preview">Check this out!</span>
-                    </div>
-                </div>
-            </div>
+        <div id="conversation-sidebar">
+            <h2>Conversations</h2>
+            <ul id="conversation-list">
+                <!-- <li onclick="selectConversation('User1', 'User2')">User1 & User2</li>
+                <li onclick="selectConversation('User1', 'User3')">User1 & User3</li>
+                <li onclick="selectConversation('User2', 'User3')">User2 & User3</li> -->
+            </ul>
         </div>
 
         <!-- Chat Window -->
-        <div class="chat-window">
-            <div class="chat-header">
-                <h3 id="chat-title">Alice</h3>
-            </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="message received">
-                    <p>Hey, how's it going?</p>
-                </div>
-                <div class="message sent">
-                    <p>Pretty good! How about you?</p>
-                </div>
-                <div class="message received">
-                    <p>Just chilling. Got any plans later?</p>
-                </div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Type a message...">
-                <button id="send-btn"><i class="fa fa-paper-plane"></i></button>
-            </div>
+        <div id="chat-container">
+            <h2 id="current-conversation">User1 & User2</h2>
+            <div id="messages"></div>
+            <input type="text" id="message-input" placeholder="Type your message..." />
+
+            <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const chatItems = document.querySelectorAll(".chat-item");
-            const chatTitle = document.getElementById("chat-title");
-            const chatMessages = document.getElementById("chat-messages");
+        const socket = new WebSocket("ws://localhost:8228/ws");
+        console.log(socket.OPEN)
+        const messageInput = document.getElementById("message-input");
+        const messagesDiv = document.getElementById("messages");
 
-            const chatData = {
-                Alice: [
-                    { type: "received", text: "Hey, how's it going?" },
-                    { type: "sent", text: "Pretty good! How about you?" },
-                    { type: "received", text: "Just chilling. Got any plans later?" },
-                ],
-                Bob: [
-                    { type: "received", text: "Let's meet tomorrow!" },
-                    { type: "sent", text: "Sounds great! What time?" },
-                ],
-                Charlie: [
-                    { type: "received", text: "Check this out!" },
-                    { type: "sent", text: "Wow, that's awesome!" },
-                ],
+        // Handle WebSocket connection
+        socket.onopen = () => {
+            console.log("Connected to WebSocket server");
+        };
+
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+
+            console.log("test")
+            // Check if the message belongs to the current conversation
+            if (
+                (message.sender === currentSender && message.receiver === currentReceiver) ||
+                (message.sender === currentReceiver && message.receiver === currentSender)
+            ) {
+                // addMessage(message.sender, message.content);
+            }
+        };
+
+        function sendMessage() {
+
+            const user = JSON.parse(messageInput.dataset.user)
+            // console.log(JSON.parse(user))
+
+            const message = {
+
+                receiver: user.id,
+                // receiver: currentReceiver,
+                content: messageInput.value,
             };
+            console.log(messageInput.value);
+            
 
-            chatItems.forEach(item => {
-                item.addEventListener("click", () => {
-                    const user = item.getAttribute("data-user");
-                    chatTitle.textContent = user;
+            socket.send(JSON.stringify(message));
+            messageInput.value = "";
+        }
 
-                    chatMessages.innerHTML = "";
-                    chatData[user].forEach(msg => {
-                        const messageDiv = document.createElement("div");
-                        messageDiv.classList.add("message", msg.type);
-                        messageDiv.innerHTML = `<p>${msg.text}</p>`;
-                        chatMessages.appendChild(messageDiv);
+        // fetch users
+
+        function fetchUsers() {
+            fetch('/api/contacts')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Raw API response:", data);
+
+                    // Convert object `{ "aymen": {...}, "user2": {...} }` to array
+                    let usersArray = Object.values(data);
+                    console.log("Converted users array:", usersArray);
+
+                    if (!Array.isArray(usersArray)) {
+                        console.error("API did not return an array:", usersArray);
+                        return;
+                    }
+
+                    let conversationList = document.getElementById("conversation-list");
+                    conversationList.innerHTML = "";
+
+                    usersArray.forEach(user => {
+                        let li = document.createElement("li");
+                        li.textContent = user.name;
+                        li.onclick = () => selectConversation(user);
+                        console.log(user);
+
+
+                        conversationList.appendChild(li);
                     });
+                })
+                .catch(error => console.error("Error fetching users:", error));
+        }
 
-                    document.querySelector(".chat-item.active")?.classList.remove("active");
-                    item.classList.add("active");
-                });
-            });
-        });
+        window.onload = fetchUsers;
+
+
+
+        function fetchConversation(receiver) {
+            fetch(`/api/chat?receiver=${receiver.id}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('hello');
+                    
+                    const msgInput = document.getElementById("message-input")
+                    let receiver = JSON.parse(msgInput.dataset.user)
+
+                    messagesDiv.innerHTML = "";
+                    data.forEach((msg) => {
+                        addMessage(msg, receiver);
+                    });
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                }).catch(console.log);
+                
+        }
+
+        function selectConversation(receiver) {
+            console.log(receiver);
+
+            // currentSender = sender;
+            // currentReceiver = receiver;
+            document.getElementById("current-conversation").textContent = `${receiver.name}`;
+            document.getElementById("message-input").setAttribute('data-user', JSON.stringify(receiver))
+            console.log(receiver);
+
+            fetchConversation(receiver);
+        }
+
+        function addMessage(msg, currentReceiver) {
+            
+            const msgElement = document.createElement("div");
+            console.log(msg, currentReceiver)
+
+            msgElement.className = `message ${msg.sender !== currentReceiver.id ? "self" : "other"}`;
+
+            const contentElement = document.createElement("div");
+            contentElement.className = "content";
+            contentElement.textContent = msg.content;
+
+            msgElement.appendChild(contentElement);
+            messagesDiv.appendChild(msgElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        }
+
+
+        let currentReceiver = document.getElementById("message-input").dataset.user
+
+        // Load initial conversation
+        fetchConversation(JSON.parse(currentReceiver));
 
     </script>
 
