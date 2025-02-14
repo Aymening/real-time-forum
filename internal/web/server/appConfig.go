@@ -77,7 +77,7 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
-	users, err := app.DB.GetAllUsers()
+	users, err := app.DB.GetAllUsersExceptCurrent(r)
 	if err != nil {
 		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 		return

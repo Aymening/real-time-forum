@@ -1,6 +1,8 @@
 package db
 
 import (
+	"net/http"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -15,8 +17,22 @@ type User struct {
 	Reactions map[string][]int  `json:"reactions,omitempty"`
 }
 
-func (d *Database) GetAllUsers() ([]User, error) {
-	rows, err := d.db.Query("SELECT id, username FROM users")
+func (d *Database) GetAllUsersExceptCurrent(r *http.Request) ([]User, error) {
+	// Get the session token from the request
+	token, err := GetSessionToken(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// Retrieve the current user's ID based on the session token
+	var currentUserID int
+	err = d.db.QueryRow("SELECT id FROM users WHERE token = ?", token).Scan(&currentUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Query to get all users except the current user
+	rows, err := d.db.Query("SELECT id, username FROM users WHERE id != ?", currentUserID)
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +49,25 @@ func (d *Database) GetAllUsers() ([]User, error) {
 
 	return users, nil
 }
+
+// func (d *Database) GetAllUsers() ([]User, error) {
+// 	rows, err := d.db.Query("SELECT id, username FROM users")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+
+// 	var users []User
+// 	for rows.Next() {
+// 		var user User
+// 		if err := rows.Scan(&user.Id, &user.UserName); err != nil {
+// 			return nil, err
+// 		}
+// 		users = append(users, user)
+// 	}
+
+// 	return users, nil
+// }
 
 func (d *Database) InsertUser(users map[string]*User, name, email, Password string) error {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(Password), 12) // 2¹² times

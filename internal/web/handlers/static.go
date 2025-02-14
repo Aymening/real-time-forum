@@ -28,6 +28,7 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 		"js/reaction.js":         true,
 		"js/alert.js":            true,
 		"img/icon.png":           true,
+		"js/chat.js":             true,
 	}
 	path := r.URL.Path[len("/static/"):]
 	if allowedFiles[path] {
