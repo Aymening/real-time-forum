@@ -11,16 +11,18 @@ socket.onopen = () => {
 
 socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
+    // // notification part
+    if (message.type === 'notification') {
+        // alert(`${message.from}: ${message.message}`)
+        // console.log('new message here');
+        showToast(`${message.from}: ${message.message}`);
+        console.log(message);
+    } else {
+        addMessage(message, JSON.parse(messageInput.dataset.user))
+    }
 
     // console.log(message.sender)
-    addMessage(message, JSON.parse(messageInput.dataset.user))
-    // Check if the message belongs to the current conversation
-    // if (
-    //     (message.sender === currentSender && message.receiver === currentReceiver) ||
-    //     (message.sender === currentReceiver && message.receiver === currentSender)
-    // ) {
-    //     // addMessage(message.sender, message.content);
-    // }
+
 };
 
 function sendMessage() {
@@ -38,6 +40,7 @@ function sendMessage() {
 
 
     socket.send(JSON.stringify(message));
+
     messageInput.value = "";
 }
 
@@ -76,8 +79,6 @@ function fetchUsers() {
 
 window.onload = function () {
     fetchUsers();
-    // document.getElementById("sendButton").classList.add("hidden")
-    // document.getElementById("message-input").classList.add("hidden")
 };
 
 function fetchConversation(receiver) {
@@ -135,11 +136,27 @@ function addMessage(msg, currentReceiver) {
 }
 
 
+// this is the toast notification
+function showToast(message) {
+    let toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 500); // Remove after animation
+    }, 2000);
+}
+
 
 
 let currentReceiver = document.getElementById("message-input").dataset.user
 
 // Load initial conversation
+if (currentReceiver) {
 fetchConversation(JSON.parse(currentReceiver));
 
+}
 

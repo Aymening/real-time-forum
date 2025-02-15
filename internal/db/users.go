@@ -167,3 +167,15 @@ func (d *Database) TokenVerification(token string) (string, error) {
 
 	return user.UserName, nil
 }
+
+// retrieve username of sender from its id
+func (db *Database) GetSenderUsernameByID(senderID int) (string, error) {
+	var username string
+	query := `SELECT username FROM users WHERE id = ?`
+	err := db.db.QueryRow(query, senderID).Scan(&username)
+	if err != nil {
+		return "", err
+	}
+	return username, nil
+}
+

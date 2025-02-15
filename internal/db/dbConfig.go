@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"forum/internal/entity"
 	"net/http"
 	"strconv"
@@ -69,7 +68,7 @@ func GetReceiverID(r *http.Request) (int, error) {
 
 // **Step 4: Fetch messages from the database**
 func (db *Database) FetchMessages(senderID, receiverID int) ([]entity.Message, error) {
-	fmt.Println(senderID, receiverID)
+
 	var messages []entity.Message
 	query := `SELECT sender, receiver, content FROM messages 
               WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) 
@@ -89,7 +88,6 @@ func (db *Database) FetchMessages(senderID, receiverID int) ([]entity.Message, e
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(msg.Content)
 		messages = append(messages, msg)
 	}
 	return messages, nil
