@@ -1,0 +1,117 @@
+  /* General Styles */
+  body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #f4f4f4;
+  }
+
+  #app-container {
+      display: flex;
+      width: 100%;
+  }
+
+  /* Sidebar for Conversations */
+  #conversation-sidebar {
+      width: 250px;
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      box-sizing: border-box;
+  }
+
+  #conversation-sidebar h2 {
+      margin-bottom: 10px;
+  }
+
+  #conversation-sidebar ul {
+      list-style: none;
+      padding: 0;
+  }
+
+  #conversation-sidebar li {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #444;
+      margin-bottom: 5px;
+      border-radius: 4px;
+  }
+
+  #conversation-sidebar li:hover {
+      background-color: #555;
+  }
+
+  /* Chat Container */
+  #chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      padding: 20px;
+      box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  #chat-container h2 {
+      margin-bottom: 10px;
+  }
+
+  #messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+  }
+
+  /* Message Styling */
+  .message {
+      margin-bottom: 10px;
+  }
+
+  .message.self {
+      text-align: right;
+  }
+
+  .message.other {
+      text-align: left;
+  }
+
+  .message .content {
+      display: inline-block;
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #dfdede;
+  }
+
+  .message.self .content {
+      background-color: #dcf8c6;
+  }
+
+  /* Input Field */
+  #message-input {
+      width: calc(100% - 85px);
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+  }
+
+  #sendButton {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+
+  #sendButton:hover {
+      background-color: #0056b3;
+  }
+
+  .hidden {
+    display: none;
+}

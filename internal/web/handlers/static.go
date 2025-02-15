@@ -19,6 +19,7 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 		"css/alert.css":          true,
 		"css/comments.css":       true,
 		"css/error.css":          true,
+		"css/chat.css":           true,
 		"js/register.js":         true,
 		"js/login.js":            true,
 		"js/permissionDenied.js": true,
