@@ -23,6 +23,7 @@ type App struct {
 var mutex sync.Mutex
 var clients = make(map[*websocket.Conn]int)
 var broadcast = make(chan entity.Message)
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -81,6 +82,7 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 func (app *App) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	users, err := app.DB.GetAllUsersExceptCurrent(r)
 	if err != nil {
+		fmt.Print(err)
 		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 		return
 	}

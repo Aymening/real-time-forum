@@ -18,7 +18,9 @@ socket.onmessage = (event) => {
         showToast(`${message.from}: ${message.message}`);
         console.log(message);
     } else {
-        addMessage(message, JSON.parse(messageInput.dataset.user))
+        if(messageInput.dataset.user) {
+            addMessage(message, JSON.parse(messageInput.dataset.user))
+        }
     }
 
     // console.log(message.sender)
@@ -125,6 +127,7 @@ function addMessage(msg, currentReceiver) {
     const contentElement = document.createElement("div");
     contentElement.className = "content";
     contentElement.textContent = msg.content;
+    fetchUsers()
 
     msgElement.appendChild(contentElement);
     messagesDiv.appendChild(msgElement);

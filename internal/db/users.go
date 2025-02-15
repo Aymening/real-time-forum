@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+	"forum/internal/entity"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -17,7 +19,7 @@ type User struct {
 	Reactions map[string][]int  `json:"reactions,omitempty"`
 }
 
-func (d *Database) GetAllUsersExceptCurrent(r *http.Request) ([]User, error) {
+func (d *Database) GetAllUsersExceptCurrent(r *http.Request) ([]entity.Contact, error) {
 	// Get the session token from the request
 	token, err := GetSessionToken(r)
 	if err != nil {
@@ -32,16 +34,33 @@ func (d *Database) GetAllUsersExceptCurrent(r *http.Request) ([]User, error) {
 	}
 
 	// Query to get all users except the current user
-	rows, err := d.db.Query("SELECT id, username FROM users WHERE id != ?", currentUserID)
+	rows, err := d.db.Query(`SELECT 
+    u.id AS user_id,
+    u.username,
+    MAX(m.timestamp) AS last_message_time
+FROM 
+    users u
+LEFT JOIN 
+    messages m 
+ON 
+    (m.sender = u.id OR m.receiver = u.id)
+    AND (m.sender = ? OR m.receiver = ?)
+WHERE 
+    u.id != ?
+GROUP BY 
+    u.id, u.username
+ORDER BY 
+    last_message_time DESC;`, currentUserID, currentUserID, currentUserID)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
 
-	var users []User
+	var users []entity.Contact
 	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.Id, &user.UserName); err != nil {
+		var user entity.Contact
+		if err := rows.Scan(&user.Id, &user.UserName, &user.LastMessage); err != nil {
 			return nil, err
 		}
 		users = append(users, user)
@@ -178,4 +197,3 @@ func (db *Database) GetSenderUsernameByID(senderID int) (string, error) {
 	}
 	return username, nil
 }
-
