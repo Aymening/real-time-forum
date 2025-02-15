@@ -52,7 +52,7 @@ GROUP BY
 ORDER BY 
     last_message_time DESC;`, currentUserID, currentUserID, currentUserID)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("QUERY", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -60,7 +60,9 @@ ORDER BY
 	var users []entity.Contact
 	for rows.Next() {
 		var user entity.Contact
+		fmt.Println("user last message ",user.LastMessage)
 		if err := rows.Scan(&user.Id, &user.UserName, &user.LastMessage); err != nil {
+			// fmt.Println("here is the error")
 			return nil, err
 		}
 		users = append(users, user)
